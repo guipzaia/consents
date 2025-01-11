@@ -2,31 +2,37 @@ package com.raidiam.consents.adapters.rest;
 
 import com.raidiam.consents.adapters.rest.port.ConsentRequest;
 import com.raidiam.consents.adapters.rest.port.ConsentResponse;
+import com.raidiam.consents.adapters.rest.port.ConsentUpdateRequest;
 import com.raidiam.consents.domain.enums.ConsentPermission;
 import com.raidiam.consents.domain.enums.ConsentStatus;
 import com.raidiam.consents.usecases.createconsent.ICreateConsent;
 import com.raidiam.consents.usecases.createconsent.port.CreateConsentRequest;
 import com.raidiam.consents.usecases.createconsent.port.CreateConsentResponse;
 import com.raidiam.consents.usecases.retrieveconsent.IRetrieveConsent;
+import com.raidiam.consents.usecases.retrieveconsent.port.RetrieveConsentRequest;
+import com.raidiam.consents.usecases.retrieveconsent.port.RetrieveConsentResponse;
 import com.raidiam.consents.usecases.revokeconsent.IRevokeConsent;
+import com.raidiam.consents.usecases.revokeconsent.port.RevokeConsentRequest;
 import com.raidiam.consents.usecases.updateconsent.IUpdateConsent;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import com.raidiam.consents.usecases.updateconsent.port.UpdateConsentRequest;
+import com.raidiam.consents.usecases.updateconsent.port.UpdateConsentResponse;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static org.awaitility.Awaitility.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ConsentControllerTest {
 
     @InjectMocks
-    private ConsentController consentController;
+    ConsentController consentController;
 
     @Mock
     private ICreateConsent createConsent;
@@ -41,15 +47,10 @@ public class ConsentControllerTest {
     private IRevokeConsent revokeConsent;
 
     @Test
-    public void createConsentSuccessfullyTest() {
+    public void createConsentSuccessfully() {
 
         // Arrange
-        var mockCreateConsentRequest =
-                CreateConsentRequest.builder()
-                        .userId("user-12345")
-                        .permissions(List.of(ConsentPermission.READ_DATA))
-                        .status(ConsentStatus.AWAITING_AUTHORISATION)
-                        .build();
+        var frozenTime = "2025-01-01T00:00:00Z";
 
         var mockCreateConsentResponse =
                 CreateConsentResponse.builder()
@@ -57,12 +58,12 @@ public class ConsentControllerTest {
                         .userId("user-12345")
                         .permissions(List.of(ConsentPermission.READ_DATA))
                         .status(ConsentStatus.AWAITING_AUTHORISATION)
-                        .createdAt("2025-01-01T00:00:00Z")
-                        .updatedAt("2025-01-01T00:00:00Z")
-                        .requestDateTime("2025-01-01T00:00:00Z")
+                        .createdAt(frozenTime)
+                        .updatedAt(frozenTime)
+                        .requestDateTime(frozenTime)
                         .build();
 
-        lenient().doReturn(mockCreateConsentResponse).when(createConsent).execute(mockCreateConsentRequest);
+        when(createConsent.execute(any(CreateConsentRequest.class))).thenReturn(mockCreateConsentResponse);
 
         var consentRequest =
                 ConsentRequest.builder()
@@ -77,17 +78,126 @@ public class ConsentControllerTest {
                         .userId("user-12345")
                         .permissions(List.of(ConsentPermission.READ_DATA))
                         .status(ConsentStatus.AWAITING_AUTHORISATION)
-                        .createdAt("2025-01-01T00:00:00Z")
-                        .updatedAt("2025-01-01T00:00:00Z")
+                        .createdAt(frozenTime)
+                        .updatedAt(frozenTime)
                         .meta(ConsentResponse.Meta.builder()
-                                .requestDateTime("2025-01-01T00:00:00Z")
+                                .requestDateTime(frozenTime)
                                 .build())
                         .build();
 
         // Act
-        var consentResponse = consentController.createConsent(consentRequest);
+        var createdConsent = consentController.createConsent(consentRequest);
 
         // Assert
-        assertEquals(consentResponse, expectedConsentResponse);
+        assertThat(createdConsent)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedConsentResponse);
+    }
+
+    @Test
+    public void retrieveConsentSuccessfully() {
+
+        // Arrange
+        var frozenTime = "2025-01-01T00:00:00Z";
+
+        var mockRetrieveConsentResponse =
+                RetrieveConsentResponse.builder()
+                        .consentId("consent-1")
+                        .userId("user-12345")
+                        .permissions(List.of(ConsentPermission.READ_DATA))
+                        .status(ConsentStatus.AWAITING_AUTHORISATION)
+                        .createdAt(frozenTime)
+                        .updatedAt(frozenTime)
+                        .requestDateTime(frozenTime)
+                        .build();
+
+        when(retrieveConsent.execute(any(RetrieveConsentRequest.class))).thenReturn(mockRetrieveConsentResponse);
+
+        var expectedConsentResponse =
+                ConsentResponse.builder()
+                        .consentId("consent-1")
+                        .userId("user-12345")
+                        .permissions(List.of(ConsentPermission.READ_DATA))
+                        .status(ConsentStatus.AWAITING_AUTHORISATION)
+                        .createdAt(frozenTime)
+                        .updatedAt(frozenTime)
+                        .meta(ConsentResponse.Meta.builder()
+                                .requestDateTime(frozenTime)
+                                .build())
+                        .build();
+
+        // Act
+        var retrievedConsent = consentController.retrieveConsent("consent-1");
+
+        // Assert
+        assertThat(retrievedConsent)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedConsentResponse);
+    }
+
+    @Test
+    public void updateConsentSuccessfully() {
+
+        // Arrange
+        var frozenTime = "2025-01-01T00:00:00Z";
+
+        var consentUpdateRequest =
+                ConsentUpdateRequest.builder()
+                        .permissions(List.of(
+                            ConsentPermission.READ_DATA,
+                            ConsentPermission.WRITE_DATA
+                        ))
+                        .status(ConsentStatus.AUTHORISED)
+                        .build();
+
+        var mockUpdateConsentResponse =
+                UpdateConsentResponse.builder()
+                        .consentId("consent-1")
+                        .userId("user-12345")
+                        .permissions(List.of(
+                                ConsentPermission.READ_DATA,
+                                ConsentPermission.WRITE_DATA
+                        ))
+                        .status(ConsentStatus.AUTHORISED)
+                        .createdAt(frozenTime)
+                        .updatedAt(frozenTime)
+                        .requestDateTime(frozenTime)
+                        .build();
+
+        when(updateConsent.execute(any(UpdateConsentRequest.class))).thenReturn(mockUpdateConsentResponse);
+
+        var expectedConsentResponse =
+                ConsentResponse.builder()
+                        .consentId("consent-1")
+                        .userId("user-12345")
+                        .permissions(List.of(
+                                ConsentPermission.READ_DATA,
+                                ConsentPermission.WRITE_DATA
+                        ))
+                        .status(ConsentStatus.AUTHORISED)
+                        .createdAt(frozenTime)
+                        .updatedAt(frozenTime)
+                        .meta(ConsentResponse.Meta.builder()
+                                .requestDateTime(frozenTime)
+                                .build())
+                        .build();
+
+        // Act
+        var updatedConsent = consentController.updateConsent("consent-1", consentUpdateRequest);
+
+        // Assert
+        assertThat(updatedConsent)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedConsentResponse);
+    }
+
+    @Test
+    public void revokeConsentSuccessfully() {
+
+        // Arrange & Act
+        consentController.revokeConsent("consent-1");
+
+        // Assert
+        verify(revokeConsent, times(1)).execute(any(RevokeConsentRequest.class));
     }
 }

@@ -20,13 +20,12 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.raidiam.consents.utils.ErrorMessage.TOO_MANY_REQUESTS;
+import static com.raidiam.consents.domain.messages.ErrorMessage.TOO_MANY_REQUESTS;
 
 @Component
 public class RateLimitingFilter implements Filter {
 
-    private final HttpServletRequest httpServletRequest;
-    @Value("${custom.transctions-per-second}")
+    @Value("${custom.transactions-per-second}")
     private int tps;
 
     private final LoadingCache<String, Integer> cacheLoader;
@@ -37,7 +36,7 @@ public class RateLimitingFilter implements Filter {
     /**
      * Constructor: Creates a new CacheLoader expiring after 1 second
      */
-    public RateLimitingFilter(HttpServletRequest httpServletRequest) {
+    public RateLimitingFilter() {
         super();
         this.cacheLoader =
                 Caffeine.newBuilder()
@@ -50,7 +49,6 @@ public class RateLimitingFilter implements Filter {
                             }
                         }
                     );
-        this.httpServletRequest = httpServletRequest;
     }
 
     /**

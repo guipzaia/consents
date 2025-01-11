@@ -2,7 +2,6 @@ package com.raidiam.consents.usecases.retrieveconsent;
 
 import com.raidiam.consents.adapters.repositories.IConsentRepository;
 import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
-import com.raidiam.consents.usecases.createconsent.CreateConsent;
 import com.raidiam.consents.usecases.retrieveconsent.port.RetrieveConsentRequest;
 import com.raidiam.consents.usecases.retrieveconsent.port.RetrieveConsentResponse;
 import com.raidiam.consents.utils.CustomFormatter;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.util.Date;
 
-import static com.raidiam.consents.utils.ErrorMessage.CONSENT_NOT_FOUND;
+import static com.raidiam.consents.domain.messages.ErrorMessage.CONSENT_NOT_FOUND;
 
 @Service
 public class RetrieveConsent implements IRetrieveConsent {
@@ -38,14 +37,14 @@ public class RetrieveConsent implements IRetrieveConsent {
 
         logger.info("Retrieve consent request: {}", request);
 
-        // Get current timestamp according to RFC3339 UTC
-        String now = CustomFormatter.RFC3339.format(Date.from(clock.instant()));
-
         // Get numerical consent id
         Long consentId = CustomFormatter.getLongConsentId(request.getConsentId());
 
         // Try to find consent in repository
         var consent = consentRepository.findById(consentId).orElseThrow(() -> new ConsentNotFoundException(CONSENT_NOT_FOUND));
+
+        // Get current timestamp according to RFC3339 UTC
+        String now = CustomFormatter.RFC3339.format(Date.from(clock.instant()));
 
         var retrieveConsentResponse =
                 RetrieveConsentResponse.builder()

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import static com.raidiam.consents.utils.ErrorMessage.*;
+import static com.raidiam.consents.domain.messages.ErrorMessage.*;
 
 @RestController
 @RequestMapping("/consents")
@@ -109,18 +109,18 @@ public class ConsentController {
 						.consentId(consentId)
 						.build();
 
-		var createConsentResponse = retrieveConsent.execute(retrieveConsentRequest);
+		var retrieveConsentResponse = retrieveConsent.execute(retrieveConsentRequest);
 
 		var consentReponse =
 				ConsentResponse.builder()
-					.consentId(createConsentResponse.getConsentId())
-					.userId(createConsentResponse.getUserId())
-					.permissions(createConsentResponse.getPermissions())
-					.status(createConsentResponse.getStatus())
-					.createdAt(createConsentResponse.getCreatedAt())
-					.updatedAt(createConsentResponse.getUpdatedAt())
+					.consentId(retrieveConsentResponse.getConsentId())
+					.userId(retrieveConsentResponse.getUserId())
+					.permissions(retrieveConsentResponse.getPermissions())
+					.status(retrieveConsentResponse.getStatus())
+					.createdAt(retrieveConsentResponse.getCreatedAt())
+					.updatedAt(retrieveConsentResponse.getUpdatedAt())
 					.meta(ConsentResponse.Meta.builder()
-							.requestDateTime(createConsentResponse.getRequestDateTime())
+							.requestDateTime(retrieveConsentResponse.getRequestDateTime())
 							.build())
 					.build();
 

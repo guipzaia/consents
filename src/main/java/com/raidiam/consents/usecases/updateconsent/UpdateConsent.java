@@ -1,7 +1,6 @@
 package com.raidiam.consents.usecases.updateconsent;
 
 import com.raidiam.consents.adapters.repositories.IConsentRepository;
-import com.raidiam.consents.adapters.rest.ConsentController;
 import com.raidiam.consents.domain.enums.ConsentStatus;
 import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
 import com.raidiam.consents.domain.exceptions.ConsentWithInvalidStatusException;
@@ -16,8 +15,8 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.util.Date;
 
-import static com.raidiam.consents.utils.ErrorMessage.CONSENT_NOT_FOUND;
-import static com.raidiam.consents.utils.ErrorMessage.INVALID_CONSENT_UPDATE_STATUS;
+import static com.raidiam.consents.domain.messages.ErrorMessage.CONSENT_NOT_FOUND;
+import static com.raidiam.consents.domain.messages.ErrorMessage.INVALID_CONSENT_UPDATE_STATUS;
 
 @Service
 public class UpdateConsent implements IUpdateConsent {
@@ -45,14 +44,14 @@ public class UpdateConsent implements IUpdateConsent {
             throw new ConsentWithInvalidStatusException(INVALID_CONSENT_UPDATE_STATUS);
         }
 
-        // Get current timestamp according to RFC3339 UTC
-        String now = CustomFormatter.RFC3339.format(Date.from(clock.instant()));
-
         // Get numerical consent id
         Long consentId = CustomFormatter.getLongConsentId(request.getConsentId());
 
         // Try to find consent in repository
         var consent = consentRepository.findById(consentId).orElseThrow(() -> new ConsentNotFoundException(CONSENT_NOT_FOUND));
+
+        // Get current timestamp according to RFC3339 UTC
+        String now = CustomFormatter.RFC3339.format(Date.from(clock.instant()));
 
         // Set new details
         consent.setStatus(request.getStatus());

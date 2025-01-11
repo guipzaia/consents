@@ -1,4 +1,4 @@
-package com.raidiam.consents.utils;
+package com.raidiam.consents.domain.messages;
 
 public class ErrorMessage {
 
@@ -10,6 +10,7 @@ public class ErrorMessage {
     public static final String INVALID_VALUE_IN_THE_LIST = "Field %s must be one of the values in the list %s";
     public static final String CONSENT_NOT_FOUND = "Consent not found";
     public static final String INVALID_INPUT = "Invalid input";
+    public static final String REQUEST_BODY_MISSING = "Required request body is missing";
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";
     public static final String TOO_MANY_REQUESTS = "Too many requests";
 

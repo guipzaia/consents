@@ -15,13 +15,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.List;
 
-import static com.raidiam.consents.utils.ErrorMessage.*;
+import static com.raidiam.consents.domain.messages.ErrorMessage.*;
 
 @RestControllerAdvice
 public class ConsentControllerAdvice {
@@ -126,9 +125,11 @@ public class ConsentControllerAdvice {
 
         logger.error("Http message not readable: {} {}", request, ex.getLocalizedMessage());
 
+        var error = ex.getLocalizedMessage().contains(REQUEST_BODY_MISSING) ? REQUEST_BODY_MISSING : ex.getLocalizedMessage();
+
         return ConsentErrorResponse.builder()
                 .message(INVALID_INPUT)
-                .errors(List.of(ex.getLocalizedMessage()))
+                .errors(List.of(error))
                 .build();
     }
 

@@ -11,4 +11,4 @@ spring:
 server:
   port: 8080
 custom:
-  transctions-per-second: 5
+  transactions-per-second: 5

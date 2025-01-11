@@ -1,7 +1,6 @@
 package com.raidiam.consents.usecases.revokeconsent;
 
 import com.raidiam.consents.adapters.repositories.IConsentRepository;
-import com.raidiam.consents.adapters.rest.ConsentController;
 import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
 import com.raidiam.consents.usecases.revokeconsent.port.RevokeConsentRequest;
 import com.raidiam.consents.utils.CustomFormatter;
@@ -10,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.raidiam.consents.utils.ErrorMessage.CONSENT_NOT_FOUND;
+import static com.raidiam.consents.domain.messages.ErrorMessage.CONSENT_NOT_FOUND;
 
 @Service
 public class RevokeConsent implements IRevokeConsent {
