@@ -1,5 +1,7 @@
 ## ABOUT THE PROJECT
-Consent API for Junior/Mid-Level Engineer Test Case
+Consent API for Junior/Mid-Level Engineer Test Case.
+
+Available on https://github.com/guipzaia/consents
 
 ### BUILT WITH
 * Java v17
@@ -7,69 +9,95 @@ Consent API for Junior/Mid-Level Engineer Test Case
 
 ### SOURCE TREE
 Developed in Clean Architecture
-```tree
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── com
-│   │   │       └── raidiam
-│   │   │           └── consents
-│   │   │               ├── adapters
-│   │   │               │   ├── repositories
-│   │   │               │   │   └── IConsentRepository.java
-│   │   │               │   └── rest
-│   │   │               │       ├── ConsentControllerAdvice.java
-│   │   │               │       ├── ConsentController.java
-│   │   │               │       ├── port
-│   │   │               │       │   ├── ConsentErrorResponse.java
-│   │   │               │       │   ├── ConsentRequest.java
-│   │   │               │       │   ├── ConsentResponse.java
-│   │   │               │       │   └── ConsentUpdateRequest.java
-│   │   │               │       └── RateLimitingFilter.java
-│   │   │               ├── config
-│   │   │               │   └── ClockConfiguration.java
-│   │   │               ├── ConsentsApplication.java
-│   │   │               ├── domain
-│   │   │               │   ├── entities
-│   │   │               │   │   └── Consent.java
-│   │   │               │   ├── enums
-│   │   │               │   │   ├── ConsentPermission.java
-│   │   │               │   │   └── ConsentStatus.java
-│   │   │               │   ├── exceptions
-│   │   │               │   │   ├── ConsentNotFoundException.java
-│   │   │               │   │   ├── ConsentPermissionsWithDuplicateValueException.java
-│   │   │               │   │   └── ConsentWithInvalidStatusException.java
-│   │   │               │   └── messages
-│   │   │               │       └── ErrorMessage.java
-│   │   │               ├── usecases
-│   │   │               │   ├── createconsent
-│   │   │               │   │   ├── CreateConsent.java
-│   │   │               │   │   ├── ICreateConsent.java
-│   │   │               │   │   └── port
-│   │   │               │   │       ├── CreateConsentRequest.java
-│   │   │               │   │       └── CreateConsentResponse.java
-│   │   │               │   ├── retrieveconsent
-│   │   │               │   │   ├── IRetrieveConsent.java
-│   │   │               │   │   ├── port
-│   │   │               │   │   │   ├── RetrieveConsentRequest.java
-│   │   │               │   │   │   └── RetrieveConsentResponse.java
-│   │   │               │   │   └── RetrieveConsent.java
-│   │   │               │   ├── revokeconsent
-│   │   │               │   │   ├── IRevokeConsent.java
-│   │   │               │   │   ├── port
-│   │   │               │   │   │   └── RevokeConsentRequest.java
-│   │   │               │   │   └── RevokeConsent.java
-│   │   │               │   └── updateconsent
-│   │   │               │       ├── IUpdateConsent.java
-│   │   │               │       ├── port
-│   │   │               │       │   ├── UpdateConsentRequest.java
-│   │   │               │       │   └── UpdateConsentResponse.java
-│   │   │               │       └── UpdateConsent.java
-│   │   │               └── utils
-│   │   │                   ├── CustomFormatter.java
-│   │   │                   └── EnumDuplicateChecker.java
-│   │   └── resources
-│   │       └── application.yaml
+```
+.
+├── local.env
+├── Makefile
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+├── README.md
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── com
+    │   │       └── raidiam
+    │   │           └── consents
+    │   │               ├── adapters
+    │   │               │   ├── repositories
+    │   │               │   │   └── IConsentRepository.java
+    │   │               │   └── rest
+    │   │               │       ├── ConsentControllerAdvice.java
+    │   │               │       ├── ConsentController.java
+    │   │               │       ├── port
+    │   │               │       │   ├── ConsentErrorResponse.java
+    │   │               │       │   ├── ConsentRequest.java
+    │   │               │       │   ├── ConsentResponse.java
+    │   │               │       │   └── ConsentUpdateRequest.java
+    │   │               │       └── RateLimitingFilter.java
+    │   │               ├── config
+    │   │               │   └── ClockConfiguration.java
+    │   │               ├── ConsentApplication.java
+    │   │               ├── domain
+    │   │               │   ├── entities
+    │   │               │   │   └── Consent.java
+    │   │               │   ├── enums
+    │   │               │   │   ├── ConsentPermission.java
+    │   │               │   │   └── ConsentStatus.java
+    │   │               │   ├── exceptions
+    │   │               │   │   ├── ConsentNotFoundException.java
+    │   │               │   │   ├── ConsentPermissionsWithDuplicateValueException.java
+    │   │               │   │   └── ConsentWithInvalidStatusException.java
+    │   │               │   └── messages
+    │   │               │       └── ErrorMessage.java
+    │   │               ├── usecases
+    │   │               │   ├── createconsent
+    │   │               │   │   ├── CreateConsent.java
+    │   │               │   │   ├── ICreateConsent.java
+    │   │               │   │   └── port
+    │   │               │   │       ├── CreateConsentRequest.java
+    │   │               │   │       └── CreateConsentResponse.java
+    │   │               │   ├── retrieveconsent
+    │   │               │   │   ├── IRetrieveConsent.java
+    │   │               │   │   ├── port
+    │   │               │   │   │   ├── RetrieveConsentRequest.java
+    │   │               │   │   │   └── RetrieveConsentResponse.java
+    │   │               │   │   └── RetrieveConsent.java
+    │   │               │   ├── revokeconsent
+    │   │               │   │   ├── IRevokeConsent.java
+    │   │               │   │   ├── port
+    │   │               │   │   │   └── RevokeConsentRequest.java
+    │   │               │   │   └── RevokeConsent.java
+    │   │               │   └── updateconsent
+    │   │               │       ├── IUpdateConsent.java
+    │   │               │       ├── port
+    │   │               │       │   ├── UpdateConsentRequest.java
+    │   │               │       │   └── UpdateConsentResponse.java
+    │   │               │       └── UpdateConsent.java
+    │   │               └── utils
+    │   │                   ├── CustomFormatter.java
+    │   │                   └── EnumDuplicateChecker.java
+    │   └── resources
+    │       └── application.yaml
+    └── test
+        └── java
+            └── com
+                └── raidiam
+                    └── consents
+                        ├── adapters
+                        │   └── rest
+                        │       ├── ConsentControllerAdviceTest.java
+                        │       ├── ConsentControllerTest.java
+                        │       ├── ConsentControllerWebMVCTest.java
+                        │       └── RateLimitingFilterTest.java
+                        ├── usecases
+                        │   ├── CreateConsentTest.java
+                        │   ├── RetrieveConsentTest.java
+                        │   ├── RevokeConsentTest.java
+                        │   └── UpdateConsentTest.java
+                        └── utils
+                            ├── CustomFormatterTest.java
+                            └── EnumDuplicateCheckerTest.java
 ```
 
 ## GETTING STARTED
@@ -83,11 +111,19 @@ Build project from command line
 ```sh
 mvn install
 ```
+or
+```sh
+make install
+```
 
 ### UNIT TESTS
 Run tests from command line
 ```sh
 mvn test
+```
+or
+```sh
+make test
 ```
 
 ### USAGE
@@ -96,6 +132,10 @@ Run project from command line (with environment variables)
 _Note: Environment variables in local.env for application test_ 
 ```sh
 set -a; . ./local.env; set +a; mvn spring-boot:run
+```
+or
+```sh
+make run
 ```
 
 ## API REST
