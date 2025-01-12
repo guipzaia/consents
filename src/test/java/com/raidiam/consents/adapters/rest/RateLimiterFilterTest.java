@@ -1,40 +1,66 @@
 package com.raidiam.consents.adapters.rest;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.io.IOException;
 
-@WebMvcTest(ConsentController.class)
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
 public class RateLimiterFilterTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockitoBean
-    private ConsentController consentController;
-
-    @MockitoBean
+    @InjectMocks
     private RateLimitingFilter rateLimitingFilter;
 
     @Test
-    public void throttleRequests() throws Exception {
+    public void processRequest() throws Exception {
+
+        // Arrange
+        ReflectionTestUtils.setField(rateLimitingFilter, "tps", 1);
+        var httpServletRequest = new MockHttpServletRequest();
+        var httpServletResponse = new MockHttpServletResponse();
+        var filterChain = new FilterChain() {
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+
+            }
+        };
+
+        // Act
+        rateLimitingFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
+
+        // Assert
+        assertFalse(httpServletResponse.getContentAsString().contains("Too many requests"));
+    }
+
+    @Test
+    public void throttleRequest() throws Exception {
 
         // Arrange
         ReflectionTestUtils.setField(rateLimitingFilter, "tps", 0);
+        var httpServletRequest = new MockHttpServletRequest();
+        var httpServletResponse = new MockHttpServletResponse();
+        var filterChain = new FilterChain() {
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
 
-        // Act & Assert
-        for (int i = 0; i < 30; i++) {
-            mockMvc.perform(
-                    get("/consents/consent-1")
-                            .contentType(MediaType.APPLICATION_JSON)
-            ).andExpect(status().isOk());
-        }
+            }
+        };
+
+        // Act
+        rateLimitingFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
+
+        // Assert
+        assertTrue(httpServletResponse.getContentAsString().contains("Too many requests"));
     }
 }

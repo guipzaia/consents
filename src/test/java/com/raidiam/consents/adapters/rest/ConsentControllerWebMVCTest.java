@@ -489,4 +489,14 @@ public class ConsentControllerWebMVCTest {
                 .andExpect(content().json(expectedResponse));
 
     }
+
+    @Test
+    public void tryDeleteConsentGetsInternalServerError() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(
+                        delete("/consents")
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isInternalServerError());
+    }
 }

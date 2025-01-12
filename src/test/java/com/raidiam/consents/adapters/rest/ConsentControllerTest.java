@@ -5,6 +5,8 @@ import com.raidiam.consents.adapters.rest.port.ConsentResponse;
 import com.raidiam.consents.adapters.rest.port.ConsentUpdateRequest;
 import com.raidiam.consents.domain.enums.ConsentPermission;
 import com.raidiam.consents.domain.enums.ConsentStatus;
+import com.raidiam.consents.domain.exceptions.ConsentPermissionsWithDuplicateValueException;
+import com.raidiam.consents.domain.exceptions.ConsentWithInvalidStatusException;
 import com.raidiam.consents.usecases.createconsent.ICreateConsent;
 import com.raidiam.consents.usecases.createconsent.port.CreateConsentRequest;
 import com.raidiam.consents.usecases.createconsent.port.CreateConsentResponse;
@@ -16,19 +18,23 @@ import com.raidiam.consents.usecases.revokeconsent.port.RevokeConsentRequest;
 import com.raidiam.consents.usecases.updateconsent.IUpdateConsent;
 import com.raidiam.consents.usecases.updateconsent.port.UpdateConsentRequest;
 import com.raidiam.consents.usecases.updateconsent.port.UpdateConsentResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.hibernate.sql.Update;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static com.raidiam.consents.domain.messages.ErrorMessage.DUPLICATE_PERMISSIONS_DETECTED;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ConsentControllerTest {
 
     @InjectMocks
@@ -92,6 +98,26 @@ public class ConsentControllerTest {
         assertThat(createdConsent)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedConsentResponse);
+    }
+
+    @Test
+    public void tryCreateConsentWithDuplicatePermissions() {
+
+        // Arrange
+        var consentRequest =
+                ConsentRequest.builder()
+                        .userId("user-12345")
+                        .permissions(List.of(ConsentPermission.READ_DATA, ConsentPermission.READ_DATA))
+                        .status(ConsentStatus.AWAITING_AUTHORISATION)
+                        .build();
+
+        // Act
+        var exception = assertThrows(ConsentPermissionsWithDuplicateValueException.class,
+                () -> consentController.createConsent(consentRequest)
+        );
+
+        // Assert
+        assertEquals(DUPLICATE_PERMISSIONS_DETECTED, exception.getLocalizedMessage());
     }
 
     @Test
@@ -189,6 +215,25 @@ public class ConsentControllerTest {
         assertThat(updatedConsent)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedConsentResponse);
+    }
+
+    @Test
+    public void tryUpdateConsentWithDuplicatePermissions() {
+
+        // Arrange
+        var consentUpdateRequest =
+                ConsentUpdateRequest.builder()
+                        .permissions(List.of(ConsentPermission.READ_DATA, ConsentPermission.READ_DATA))
+                        .status(ConsentStatus.AWAITING_AUTHORISATION)
+                        .build();
+
+        // Act
+        var exception = assertThrows(ConsentPermissionsWithDuplicateValueException.class,
+                () -> consentController.updateConsent("consent-12345", consentUpdateRequest)
+        );
+
+        // Assert
+        assertEquals(DUPLICATE_PERMISSIONS_DETECTED, exception.getLocalizedMessage());
     }
 
     @Test

@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.TimeZone;
 
 @SpringBootApplication
-public class ConsentsApplication {
+public class ConsentApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ConsentsApplication.class, args);
+		SpringApplication.run(ConsentApplication.class, args);
 	}
 
 	/**

@@ -5,11 +5,11 @@ import com.raidiam.consents.domain.entities.Consent;
 import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
 import com.raidiam.consents.usecases.revokeconsent.RevokeConsent;
 import com.raidiam.consents.usecases.revokeconsent.port.RevokeConsentRequest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RevokeConsentTest {
 
     @Mock

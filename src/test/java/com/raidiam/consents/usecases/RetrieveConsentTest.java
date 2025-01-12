@@ -8,15 +8,14 @@ import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
 import com.raidiam.consents.usecases.retrieveconsent.RetrieveConsent;
 import com.raidiam.consents.usecases.retrieveconsent.port.RetrieveConsentRequest;
 import com.raidiam.consents.usecases.retrieveconsent.port.RetrieveConsentResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RetrieveConsentTest {
 
     @Mock
@@ -42,8 +41,10 @@ public class RetrieveConsentTest {
     public void retrieveConsentSuccessfully() {
 
         // Arrange
-        var frozenTime = LocalDateTime.of(2025, 1, 1, 3, 0, 0).toInstant(ZoneOffset.UTC);
-        var frozenTimeString = "2025-01-01T00:00:00Z";
+        var frozenDateTime = LocalDateTime.of(2025, 1, 1, 3, 0, 0);
+        var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        var formattedFrozenDateTime = dateTimeFormatter.format(frozenDateTime);
+        var instant = ZonedDateTime.of(frozenDateTime, ZoneId.systemDefault()).toInstant();
 
         var savedMockConsent =
                 Consent.builder()
@@ -51,8 +52,8 @@ public class RetrieveConsentTest {
                         .userId("user-12345")
                         .status(ConsentStatus.AWAITING_AUTHORISATION)
                         .permissions(List.of(ConsentPermission.READ_DATA))
-                        .createdAt(frozenTimeString)
-                        .updatedAt(frozenTimeString)
+                        .createdAt(formattedFrozenDateTime)
+                        .updatedAt(formattedFrozenDateTime)
                         .build();
 
         var retrieveConsentRequest =
@@ -66,12 +67,12 @@ public class RetrieveConsentTest {
                         .userId("user-12345")
                         .status(ConsentStatus.AWAITING_AUTHORISATION)
                         .permissions(List.of(ConsentPermission.READ_DATA))
-                        .createdAt(frozenTimeString)
-                        .updatedAt(frozenTimeString)
-                        .requestDateTime(frozenTimeString)
+                        .createdAt(formattedFrozenDateTime)
+                        .updatedAt(formattedFrozenDateTime)
+                        .requestDateTime(formattedFrozenDateTime)
                         .build();
 
-        when(clock.instant()).thenReturn(frozenTime);
+        when(clock.instant()).thenReturn(instant);
         when(consentRepository.findById(1L)).thenReturn(Optional.ofNullable(savedMockConsent));
 
         // Act
