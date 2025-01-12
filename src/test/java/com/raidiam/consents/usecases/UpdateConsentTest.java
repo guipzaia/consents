@@ -6,7 +6,6 @@ import com.raidiam.consents.domain.enums.ConsentPermission;
 import com.raidiam.consents.domain.enums.ConsentStatus;
 import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
 import com.raidiam.consents.domain.exceptions.ConsentWithInvalidStatusException;
-import com.raidiam.consents.usecases.revokeconsent.port.RevokeConsentRequest;
 import com.raidiam.consents.usecases.updateconsent.UpdateConsent;
 import com.raidiam.consents.usecases.updateconsent.port.UpdateConsentRequest;
 import com.raidiam.consents.usecases.updateconsent.port.UpdateConsentResponse;

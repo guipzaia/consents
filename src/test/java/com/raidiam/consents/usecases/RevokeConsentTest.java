@@ -3,7 +3,6 @@ package com.raidiam.consents.usecases;
 import com.raidiam.consents.adapters.repositories.IConsentRepository;
 import com.raidiam.consents.domain.entities.Consent;
 import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
-import com.raidiam.consents.usecases.retrieveconsent.port.RetrieveConsentRequest;
 import com.raidiam.consents.usecases.revokeconsent.RevokeConsent;
 import com.raidiam.consents.usecases.revokeconsent.port.RevokeConsentRequest;
 import org.junit.jupiter.api.Test;
