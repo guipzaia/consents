@@ -92,8 +92,10 @@ mvn test
 
 ### USAGE
 Run project from command line (with environment variables)
+
+_Note: Environment variables in local.env for application test_ 
 ```sh
-set -a; . local.env; set +a; mvn spring-boot:run
+set -a; . ./local.env; set +a; mvn spring-boot:run
 ```
 
 ## API REST
@@ -268,9 +270,51 @@ Responses
 }
 ```
 
-### Other HTTP staus response
+### API request validation
 
+#### Resource not found
 
+Request
+```sh
+curl -X GET \
+-H 'Content-Type: application/json' \
+localhost:8080/permissions
+```
+
+Response
+* 404
+````json
+{
+  "message": "No static resource permissions."
+}
+````
+
+#### Method not allowed
+
+Request
+```sh
+curl -X GET \
+-H 'Content-Type: application/json' \
+localhost:8080/consents
+```
+Response
+* 405
+````json
+{
+  "message": "Request method 'GET' is not supported"
+}
+````
+
+#### Rate limiting filter
+
+Request
+```sh
+for i in {1..10} ;  do
+  echo "-X GET -H 'Content-Type: application/json' localhost:8080/consents/consent-${i} :-"
+done | xargs curl -s
+```
+
+Response
 * 429
 ```json
 {
@@ -278,10 +322,19 @@ Responses
 }
 ```
 
+#### Internal server error
+
+Request
+```sh
+curl -X GET \
+-H 'Content-Type: application/json' \
+localhost:8080/consents/consent-99999999999999999999
+```
+
+Response
 * 500
 ```json
 {
   "message": "Internal server error"
 }
-
 ```

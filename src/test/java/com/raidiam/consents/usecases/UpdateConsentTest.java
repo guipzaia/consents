@@ -6,6 +6,7 @@ import com.raidiam.consents.domain.enums.ConsentPermission;
 import com.raidiam.consents.domain.enums.ConsentStatus;
 import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
 import com.raidiam.consents.domain.exceptions.ConsentWithInvalidStatusException;
+import com.raidiam.consents.usecases.revokeconsent.port.RevokeConsentRequest;
 import com.raidiam.consents.usecases.updateconsent.UpdateConsent;
 import com.raidiam.consents.usecases.updateconsent.port.UpdateConsentRequest;
 import com.raidiam.consents.usecases.updateconsent.port.UpdateConsentResponse;
@@ -22,8 +23,7 @@ import java.util.Optional;
 
 import static com.raidiam.consents.domain.messages.ErrorMessage.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -127,5 +127,23 @@ public class UpdateConsentTest {
 
         // Assert
         assertEquals(CONSENT_NOT_FOUND, exception.getLocalizedMessage());
+    }
+
+    @Test
+    public void tryUpdateConsentLongIdentification() {
+
+        // Arrange
+        var updateConsentRequest =
+                UpdateConsentRequest.builder()
+                        .consentId("consent-99999999999999999999")
+                        .build();
+
+        // Act
+        var exception = assertThrows(Exception.class,
+                () -> updateConsent.execute(updateConsentRequest)
+        );
+
+        // Assert
+        assertTrue(exception.getLocalizedMessage().contains("99999999999999999999"));
     }
 }

@@ -21,8 +21,7 @@ import java.util.Optional;
 
 import static com.raidiam.consents.domain.messages.ErrorMessage.CONSENT_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -98,5 +97,23 @@ public class RetrieveConsentTest {
 
         // Assert
         assertEquals(CONSENT_NOT_FOUND, exception.getLocalizedMessage());
+    }
+
+    @Test
+    public void tryRetrieveConsentLongIdentification() {
+
+        // Arrange
+        var retrieveConsentRequest =
+                RetrieveConsentRequest.builder()
+                        .consentId("consent-99999999999999999999")
+                        .build();
+
+        // Act
+        var exception = assertThrows(Exception.class,
+                () -> retrieveConsent.execute(retrieveConsentRequest)
+        );
+
+        // Assert
+        assertTrue(exception.getLocalizedMessage().contains("99999999999999999999"));
     }
 }

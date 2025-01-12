@@ -11,12 +11,15 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
@@ -149,6 +152,42 @@ public class ConsentControllerAdvice {
         return ConsentErrorResponse.builder()
                 .message(INVALID_INPUT)
                 .errors(List.of(ex.getLocalizedMessage()))
+                .build();
+    }
+
+    /**
+     * Handle with no resource found
+     *
+     * @param ex                        Exception
+     * @param request                   Request data
+     * @return ConsentErrorResponse     Default error response
+     */
+    @ExceptionHandler({NoResourceFoundException.class, NoHandlerFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    protected ConsentErrorResponse handleNoResourceFound(Exception ex, WebRequest request) {
+
+        logger.error("No resource found: {}  {}", request, ex.getLocalizedMessage());
+
+        return ConsentErrorResponse.builder()
+                .message(ex.getLocalizedMessage())
+                .build();
+    }
+
+    /**
+     * Handle with Http method not supported
+     *
+     * @param ex                        Exception
+     * @param request                   Request data
+     * @return ConsentErrorResponse     Default error response
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected ConsentErrorResponse handleHttpRequestMethodNotSupported(Exception ex, WebRequest request) {
+
+        logger.error("Http method not supported: {}  {}", request, ex.getLocalizedMessage());
+
+        return ConsentErrorResponse.builder()
+                .message(ex.getLocalizedMessage())
                 .build();
     }
 

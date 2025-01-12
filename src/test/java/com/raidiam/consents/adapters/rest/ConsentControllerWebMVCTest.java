@@ -266,7 +266,6 @@ public class ConsentControllerWebMVCTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isBadRequest())
                 .andExpect(content().json(expectedResponse));
-
     }
 
     /*
@@ -490,13 +489,27 @@ public class ConsentControllerWebMVCTest {
 
     }
 
+    /*
+        Other HTTP test requests
+     */
+
     @Test
-    public void tryDeleteConsentGetsInternalServerError() throws Exception {
+    public void tryRequestWithMethodNotSupported() throws Exception {
 
         // Act & Assert
         mockMvc.perform(
-                        delete("/consents")
+                        patch("/consents")
                                 .contentType(MediaType.APPLICATION_JSON)
-                ).andExpect(status().isInternalServerError());
+                ).andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    public void tryRequestWithResourceNotFound() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(
+                get("/tests")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound());
     }
 }

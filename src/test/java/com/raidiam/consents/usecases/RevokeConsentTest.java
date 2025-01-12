@@ -3,6 +3,7 @@ package com.raidiam.consents.usecases;
 import com.raidiam.consents.adapters.repositories.IConsentRepository;
 import com.raidiam.consents.domain.entities.Consent;
 import com.raidiam.consents.domain.exceptions.ConsentNotFoundException;
+import com.raidiam.consents.usecases.retrieveconsent.port.RetrieveConsentRequest;
 import com.raidiam.consents.usecases.revokeconsent.RevokeConsent;
 import com.raidiam.consents.usecases.revokeconsent.port.RevokeConsentRequest;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static com.raidiam.consents.domain.messages.ErrorMessage.CONSENT_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,5 +64,23 @@ public class RevokeConsentTest {
 
         // Assert
         assertEquals(CONSENT_NOT_FOUND, exception.getLocalizedMessage());
+    }
+
+    @Test
+    public void tryRevokeConsentLongIdentification() {
+
+        // Arrange
+        var revokeConsentRequest =
+                RevokeConsentRequest.builder()
+                        .consentId("consent-99999999999999999999")
+                        .build();
+
+        // Act
+        var exception = assertThrows(Exception.class,
+                () -> revokeConsent.execute(revokeConsentRequest)
+        );
+
+        // Assert
+        assertTrue(exception.getLocalizedMessage().contains("99999999999999999999"));
     }
 }

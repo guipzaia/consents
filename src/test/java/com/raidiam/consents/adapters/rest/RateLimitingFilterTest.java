@@ -17,7 +17,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RateLimiterFilterTest {
+public class RateLimitingFilterTest {
 
     @InjectMocks
     private RateLimitingFilter rateLimitingFilter;
